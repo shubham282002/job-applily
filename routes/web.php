@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MasterSubjectController;
 use App\Http\Controllers\MasterDescriptionController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\OAuthController;
 
 
 // Public routes
@@ -29,16 +31,17 @@ Route::middleware('auth')->group(function () {
 
 });
 
+// Settings Routes
+Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile');
+Route::post('/settings/password', [SettingsController::class, 'changePassword'])->name('settings.password');
+
+// OAuth routes
+Route::get('/auth/google', [OAuthController::class, 'redirectToGoogle'])->name('oauth.google');
+Route::get('/auth/google/callback', [OAuthController::class, 'handleGoogleCallback'])->name('oauth.google.callback');
+Route::post('/auth/google/disconnect', [OAuthController::class, 'disconnectGmail'])->name('oauth.google.disconnect');
+
 // Home
 Route::get('/', function() {
     return redirect('/login');
 });
-
-
-
-
-Route::get('/google/connect',
-    [GoogleController::class,'redirect']);
-
-Route::get('/google/callback',
-    [GoogleController::class,'callback']);
