@@ -84,7 +84,7 @@
 
         <!-- Register Link -->
         <p class="text-center text-gray-600 mt-6">
-            Account nahi hai?
+            Don't have account ?
             <a href="/register" class="text-blue-600 font-600 hover:underline">Register karo</a>
         </p>
 
