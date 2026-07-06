@@ -50,6 +50,6 @@ jobs:
         sudo chmod -R 775 /var/www/job-applily/storage
         sudo chmod -R 775 /var/www/job-applily/bootstrap/cache
         
-        # Restart Apache
+        # Restart Apache 
         sudo systemctl restart apache2
         EOF
