@@ -28,12 +28,13 @@ jobs:
         # Fix git ownership
         git config --global --add safe.directory /var/www/job-applily
         
-        # Pull latest code
-        git pull origin master
+        # Reset local changes aur pull fresh
+        git fetch origin master
+        git reset --hard origin/master
         
         # Fix permissions first
         sudo chown -R ubuntu:ubuntu /var/www/job-applily
-        sudo chmod -R 775 /var/www/job-applily
+        sudo chmod -R 755 /var/www/job-applily
         
         # Install dependencies
         composer install --no-dev
@@ -50,6 +51,6 @@ jobs:
         sudo chmod -R 775 /var/www/job-applily/storage
         sudo chmod -R 775 /var/www/job-applily/bootstrap/cache
         
-        # Restart Apache 
+        # Restart Apache
         sudo systemctl restart apache2
         EOF
