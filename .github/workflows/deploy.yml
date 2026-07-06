@@ -24,8 +24,32 @@ jobs:
 
         ssh -i ~/.ssh/id_rsa $EC2_USER@$EC2_IP << 'EOF'
         cd /var/www/job-applily
+        
+        # Fix git ownership
+        git config --global --add safe.directory /var/www/job-applily
+        
+        # Pull latest code
         git pull origin master
+        
+        # Fix permissions first
+        sudo chown -R ubuntu:ubuntu /var/www/job-applily
+        sudo chmod -R 775 /var/www/job-applily
+        
+        # Install dependencies
         composer install --no-dev
+        
+        # Clear cache
+        php artisan config:clear
+        php artisan cache:clear
+        
+        # Migrate database
         php artisan migrate --force
+        
+        # Fix permissions for www-data
+        sudo chown -R www-data:www-data /var/www/job-applily
+        sudo chmod -R 775 /var/www/job-applily/storage
+        sudo chmod -R 775 /var/www/job-applily/bootstrap/cache
+        
+        # Restart Apache
         sudo systemctl restart apache2
         EOF
