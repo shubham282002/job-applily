@@ -25,25 +25,31 @@ jobs:
         ssh -i ~/.ssh/id_rsa $EC2_USER@$EC2_IP << 'EOF'
         cd /var/www/job-applily
         
-        # Fix git ownership
-        git config --global --add safe.directory /var/www/job-applily
+        # Fix all permissions first
+        sudo chown -R ubuntu:ubuntu /var/www/job-applily
+        sudo chmod -R 755 /var/www/job-applily
+        sudo chown -R ubuntu:ubuntu /var/www/job-applily/.git
+        sudo chmod -R 755 /var/www/job-applily/.git
+        rm -f /var/www/job-applily/.git/index.lock
         
-        # Reset local changes aur pull fresh
+        # Git configuration
+        git config --global --add safe.directory /var/www/job-applily
+        git config user.email "deploy@jobapplily.com"
+        git config user.name "GitHub Actions"
+        
+        # Git operations
         git fetch origin master
         git reset --hard origin/master
         
-        # Fix permissions first
-        sudo chown -R ubuntu:ubuntu /var/www/job-applily
-        sudo chmod -R 755 /var/www/job-applily
-        
         # Install dependencies
-        composer install --no-dev
+        composer install --no-dev --optimize-autoloader --classmap-authoritative
         
         # Clear cache
         php artisan config:clear
         php artisan cache:clear
+        php artisan view:clear
         
-        # Migrate database
+        # Database migrations
         php artisan migrate --force
         
         # Fix permissions for www-data
@@ -53,4 +59,7 @@ jobs:
         
         # Restart Apache
         sudo systemctl restart apache2
+        
+        # Verification
+        echo "Deployment completed successfully!"
         EOF
